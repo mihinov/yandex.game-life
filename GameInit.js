@@ -58,6 +58,4 @@ class GameInit {
   }
 }
 
-const gameInit = new GameInit();
-
 module.exports = GameInit;
