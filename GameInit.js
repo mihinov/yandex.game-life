@@ -31,17 +31,17 @@ class GameInit {
     return new Promise(resolve => rl.question(theQuestion, answ => resolve(answ)));
   }
 
-  fileOrRandom(options) { // {file, rl}
+  questionFileOrRandom(rl) {
 
-    if (options.file) { // если есть файл
-      console.log('Кинуть ссылку на файл');
-    } else { // ран
-      const rl = options.rl;
-      this.questionSizeBoard(rl).then(res => {
-        console.log(res);
-        rl.close();
-      });
-    }
+    return this.question('Выбери какой вариант(1 или 2): ', rl).then(num => {
+      if (+num === 1) { // то укажите путь к файлу
+        return this.question('Укажите путь к файлу: ', rl).then(path => {
+          return {path: path};
+        });
+      } else if (+num === 2) { // Автоматическая генерация
+        return this.questionSizeBoard(rl);
+      }
+    });
   }
 
   consoleSelection(rl) {
@@ -51,12 +51,9 @@ class GameInit {
     console.log('1. Позиции элементов ты задашь в текстовом файле и напишешь ссылку на файл');
     console.log('2. За тебя всё сгенерируется случайно! :) Нужно только задать размер доски');
 
-    this.question('Выбери какой вариант(1 или 2): ', rl).then(num => {
-      if (+num === 1) { // то укажите путь к файлу
-
-      } else if (+num === 2) {
-
-      }
+    this.questionFileOrRandom(rl).then(res => {
+      console.log(res);
+      rl.close();
     });
   }
 }

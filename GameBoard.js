@@ -37,9 +37,9 @@ class GameBoard {
   }
 }
 
-const gameBoard = new GameBoard({
-  M: 5,
-  N: 4
-});
+// const gameBoard = new GameBoard({
+//   M: 5,
+//   N: 4
+// });
 
 module.exports = GameBoard;
