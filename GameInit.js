@@ -33,6 +33,8 @@ class GameInit {
         return {err: true, msg: 'M не является числом'};
       } else if (isNaN(+N)) {
         return {err: true, msg: 'N не является числом'};
+      } else if (M < 3 && N < 3) {
+        return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, M меньше 3 и N меньше 3'};
       } else if (M < 3) {
         return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, M меньше 3'};
       } else if (N < 3) {
