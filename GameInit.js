@@ -1,5 +1,6 @@
 const readline = require('readline');
 const fs = require('fs');
+const GameBoard = require('./GameBoard');
 
 class GameInit {
   constructor(options) {
@@ -7,7 +8,6 @@ class GameInit {
     const rl = this.readlineCreateInterface();
 
     this.consoleSelection(rl);
-    // this.fileOrRandom({file: options?.file, rl: rl});
   }
 
   readlineCreateInterface() {
@@ -34,14 +34,31 @@ class GameInit {
       } else if (isNaN(+N)) {
         return {err: true, msg: 'N не является числом'};
       } else if (M < 3 && N < 3) {
-        return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, M меньше 3 и N меньше 3'};
+        return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, у вас M меньше 3 и N меньше 3'};
       } else if (M < 3) {
-        return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, M меньше 3'};
+        return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, у вас M меньше 3'};
       } else if (N < 3) {
-        return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, N меньше 3'};
+        return {err: true, msg: 'Разрешается задавать только 3*3 поле минимум, у вас N меньше 3'};
       }
+
+      const generateRandomBoard = (M, N) => {
+
+        const arrSymbols = [0, 1];
+        const arr = [];
+        
+        for (let i = 0; i < N; i++) { // N(y)
+          arr[i] = [];
+          for (let j = 0; j < M; j++) { // M{x}
+            const randomInteger = generateRandomInteger(0, arrSymbols.length - 1);
+            arr[i][j] = +arrSymbols[randomInteger];
+          }
+        }
+        return arr;
+      };
+
+      const board = generateRandomBoard(M, N);
       
-      return {data: {M: +M, N: +N}, err: false, msg: 'Ошибок нет'};
+      return {data: {M: +M, N: +N, arr: board}, err: false, msg: 'Ошибок нет'};
     });
   }
 
@@ -81,17 +98,27 @@ class GameInit {
       if (res.path) { // если передали файл
         const valid = this.validFile(res.path);
         if (valid.err) { // ошибка с файлом
+          rl.close();
           console.error(valid.msg);
-        } else { // ошибки с файлом нет
-          return valid;
         }
+        return valid;
       }
-      rl.close();
+
       return res;
     };
 
     const fileOrRandom = await this.questionFileOrRandom(rl).then(questionFileOrRandomFunctionResponse);
     console.log(fileOrRandom);
+
+    if (fileOrRandom.err === false) { // если нету ошибки
+      console.table(fileOrRandom.data.arr);
+      this.gameBoard = new GameBoard({
+        M: fileOrRandom.data.M,
+        N: fileOrRandom.data.N,
+        arr: fileOrRandom.data.arr,
+        readLine: rl
+      });
+    }
   }
 
   validFile(file) {
@@ -122,11 +149,15 @@ class GameInit {
       }
     }
 
-    const returnArr = fileContentArr.map(item => item.split(' '));
+    const returnArr = fileContentArr.map(itemY => itemY.split(' ').map(itemX => +itemX));
 
     return {err: false, msg: 'Ошибок нет', data: {M, N, arr: returnArr}};
   }
 }
+
+function generateRandomInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
 function checkFileExistsSync(filepath){
   let flag = true;
