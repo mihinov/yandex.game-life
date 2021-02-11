@@ -108,10 +108,10 @@ class GameInit {
     };
 
     const fileOrRandom = await this.questionFileOrRandom(rl).then(questionFileOrRandomFunctionResponse);
-    console.log(fileOrRandom);
+    // console.log(fileOrRandom);
 
     if (fileOrRandom.err === false) { // если нету ошибки
-      console.table(fileOrRandom.data.arr);
+      // console.table(fileOrRandom.data.arr);
       this.gameBoard = new GameBoard({
         M: fileOrRandom.data.M,
         N: fileOrRandom.data.N,
